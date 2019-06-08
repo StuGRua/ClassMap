@@ -1,0 +1,786 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>ClassMap</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdn.bootcss.com/raphael/2.2.8/raphael.min.js"></script>
+    <script type="text/javascript" src="js/res/chinaMapConfig.js"></script>
+    <script type="text/javascript" src="js/map-min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+                <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+                <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+            <![endif]-->
+</head>
+
+<body class="mapBody"
+    style="background: url(https://s2.ax1x.com/2019/03/31/ArSVDs.png) 1510.65px 0px / auto 100% no-repeat fixed, url(https://s2.ax1x.com/2019/06/06/Vdi9sg.jpg) 0% 0% / auto repeat scroll;position:relative;">
+
+    <div class="container-fluid">
+
+
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="display: none">
+            <audio id='audio' src='http://music.163.com/song/media/outer/url?id=1313102567.mp3' loop></audio>
+            <button id='status' onclick='triggerBgMusic()'>播放按钮</button>
+            <script>
+                //----------页面初始化------------
+                var audio = document.getElementById('audio');
+                if (sessionStorage.bgmusic == 'pause') {
+                    playBgMusic(false);
+                } else {
+                    playBgMusic(true);
+                    //----------处理自动播放------------
+                    //--创建页面监听，等待微信端页面加载完毕 触发音频播放
+                    document.addEventListener('DOMContentLoaded', function () {
+                        function audioAutoPlay() {
+                            playBgMusic(true);
+                            document.addEventListener("WeixinJSBridgeReady", function () {
+                                playBgMusic(true);
+                            }, false);
+                        }
+                        audioAutoPlay();
+                    });
+                    //--触摸监听，打开页面时，触摸屏幕触发事件，进行音频播放
+                    function audioAutoPlay() {
+                        playBgMusic(true);
+                        document.removeEventListener('touchstart', audioAutoPlay);
+                    }
+                    document.addEventListener('touchstart', audioAutoPlay);
+                }
+                //----------处理页面激活------------
+                var hiddenProperty = 'hidden' in document ? 'hidden' :
+                    'webkitHidden' in document ? 'webkitHidden' :
+                    'mozHidden' in document ? 'mozHidden' :
+                    null;
+                var visibilityChangeEvent = hiddenProperty.replace(/hidden/i, 'visibilitychange');
+                var onVisibilityChange = function () {
+                    if (!document[hiddenProperty]) {
+                        if (!sessionStorage.bgmusic || sessionStorage.bgmusic == 'play') {
+                            audio.play();
+                        }
+                    } else {
+                        audio.pause();
+                    }
+                }
+                document.addEventListener(visibilityChangeEvent, onVisibilityChange);
+                //---------背景音乐开关----------
+                function triggerBgMusic() {
+                    if (!sessionStorage.bgmusic || sessionStorage.bgmusic == 'play') {
+                        playBgMusic(false);
+                    } else {
+                        playBgMusic(true);
+                    }
+                }
+                //---------音乐播放和暂停----------
+                function playBgMusic(val) {
+                    if (val) {
+                        audio.play();
+                        sessionStorage.bgmusic = 'play';
+                        document.getElementById('status').innerHTML = '正在播放';
+                    } else {
+                        audio.pause();
+                        sessionStorage.bgmusic = 'pause';
+                        document.getElementById('status').innerHTML = '停止播放了';
+                    }
+                }
+            </script>
+
+        </div>
+
+
+
+
+        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="height: 1800px;">
+            <div class="itemCon">
+                <div id="ChinaMap"></div>
+                <div id="stateTip"></div>
+            </div>
+            <div id="mapTipContent">
+
+
+
+                <div class="mapTipText mapTipText0">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                黑龙江
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                许预程
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText1">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                吉林
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText2">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                辽宁
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                赵书彬
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                陆昱含
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText3">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                河北
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李钧旸
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText4">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                山东
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李窗
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                管思勤
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText5">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                江苏
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                张岩
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                王博涵
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                杨晗宇
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                王露娴
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText6">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                浙江
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                周祎男
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                黄怿
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                赖皓月
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                蒋昕
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                刘钰煜
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText7">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                安徽
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                张焱
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText8">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                河南
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText9">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                山西
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText10">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                陕西
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText11">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                甘肃
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText12">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                湖北
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                陈雪阳
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                史子毅
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                陶嘉欣
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                孙恬
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText13">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                江西
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText14">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                福建
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                杨泽宇
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李宇宸
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText15">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                湖南
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                陈秋宇
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                王小丹
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                字政宇
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText16">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                贵州
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText17">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                四川
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                黄暕
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                彪楠
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText18">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                云南
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                肖尧
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                杨杨维一
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText19">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                青海
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText20">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                海南
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText21">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                上海
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李馨然
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                王婧云
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                陈清璇
+                            </h4>
+                        </a>
+
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                邱凡嘉
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                石媛媛
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText22">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                重庆
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                徐梓闻
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText23">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                天津
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                刘婧羽
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                田晨
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText24">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                北京
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                郭纯语
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                王韵娴
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李玮昊
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText25">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                宁夏
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText26">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                内蒙古
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText27">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                广西
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText28">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                新疆
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText29">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                西藏
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText30">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                广东
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                吕彦臻
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                刘宥辰
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                杨凌淞
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                段斯瑜
+                            </h4>
+                        </a>
+
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText31">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                香港
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText32">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                台湾
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+
+
+
+                <div class="mapTipText mapTipText33">
+                    <div class="list-group">
+                        <a href="#" class="list-group-item active">
+                            <h4 class="list-group-item-heading">
+                                澳门
+                            </h4>
+                        </a>
+                        <a href="#" class="list-group-item">
+                            <h4 class="list-group-item-heading">
+                                李佳奇
+                            </h4>
+                        </a>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $(function () {
+                        function autoMap() {
+                            var mapW = $(window).width() * 0.8;
+                            var mapH = $(window).height() * 0.8;
+                            $('#ChinaMap').SVGMap({
+                                mapWidth: mapW,
+                                mapHeight: mapH,
+                                stateHoverColor: 'E71F0F',
+                                strokeHoverColor: 'ffffff',
+                            });
+                        }
+                        autoMap();
+                        $(window).resize(function () {
+                            autoMap();
+                        });
+                    })
+                </script>
+            </div>
+            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12 navbar-fixed-bottom">
+
+                <div class="well well-lg text-center">
+                    <h1>星耀18届理四</h1>
+                </div>
+
+            </div>
+        </div>
+
+</body>
+
+</html>

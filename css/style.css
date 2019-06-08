@@ -1,0 +1,112 @@
+﻿
+
+/*主要CSS*/
+* {
+    margin: 0;
+    padding: 0;
+    border: none;
+}
+
+*,
+:after,
+:before {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box
+}
+
+body {
+    color: #333;
+    text-align: center;
+    font: 12px "微软雅黑";
+}
+
+html {
+    height: 100%;
+}
+
+.mapBody {
+    background-size: cover;
+    height: 100%;
+    padding-top: 3%;
+}
+
+.mapTipText {
+    width: 280px;
+    background-color: #ffffff;
+    border: 1px solid dodgerblue;
+    border-radius: 0.3em;
+    padding: 0px 8px;
+}
+
+.mapTipText .mapTipList {
+    float: left;
+    margin-left: 4px;
+}
+
+.mapTipText .mapTipList h2 {
+    text-align: left;
+    padding-top: 6px;
+}
+
+.mapTipText .mapTipList h2 a {
+    font-size: 18px;
+    color: #262626;
+    text-decoration: none;
+    font-weight: normal;
+}
+
+.mapTipText .mapTipList h2 a:hover {
+    color: #0085d2;
+}
+
+.mapTipText .mapTipList h2 a span {
+    font-size: 16px;
+    margin-left: 3px;
+}
+
+.mapTipText .mapTipList ul {
+    display: block
+}
+
+.mapTipText .mapTipList ul li {
+    list-style: none;
+    float: left;
+    padding: 4px 0px 0 3px;
+}
+
+.mapTipText .mapTipList ul li a {
+    color: #262626;
+    font-size: 14px;
+    display: inline-block;
+    padding: 0 2px;
+    text-decoration: none;
+}
+
+.mapTipText .mapTipList ul li a:hover {
+    background-color: #2ebcfe;
+    color: #ffffff;
+}
+
+#mapTipContent {
+    width: 900px;
+    margin: 0 auto;
+    display: none
+}
+
+#ChinaMap {
+    margin: 0px auto;
+}
+
+#stateTip {
+    position: absolute;
+    left: 100%;
+    text-align: left;
+    display: inline;
+}
+
+.txDtlTop {
+    margin-bottom: 30px;
+    border-bottom: 2px solid #444;
+    box-shadow: 0 -2px 3px #000000 inset;
+}
